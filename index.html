@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Oracle | Intelligence Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050810;
+      --bg2: #080d1a;
+      --panel: #0b1120;
+      --border: #1a2a4a;
+      --accent: #00d4ff;
+      --accent2: #7b5cfa;
+      --accent3: #00ff9d;
+      --text: #dde8f8;
+      --text-dim: #8aa8cc;
+      --text-bright: #ffffff;
+      --glow: rgba(0, 212, 255, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 배경 그리드 ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── 상단 스캔라인 ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: scan 4s linear infinite;
+      z-index: 100;
+      pointer-events: none;
+    }
+    @keyframes scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      background: rgba(5,8,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+    }
+
+    .hero-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 1rem;
+      margin-bottom: 2rem;
+      animation: pulse-border 3s infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--accent); box-shadow: 0 0 8px rgba(0,212,255,0.2); }
+      50% { border-color: rgba(0,212,255,0.4); box-shadow: none; }
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      line-height: 0.9;
+      letter-spacing: 6px;
+      color: var(--text-bright);
+      margin-bottom: 0.3rem;
+    }
+    .hero-title span {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+    }
+
+    .hero-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      letter-spacing: 3px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-desc {
+      max-width: 520px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      color: var(--accent3);
+      letter-spacing: 2px;
+    }
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .scroll-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ── SECTION COMMON ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 4px;
+      color: var(--text-bright);
+      margin-bottom: 3rem;
+    }
+
+    /* ── PLATFORM CARDS ── */
+    .platforms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .platform-card {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      display: block;
+    }
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .platform-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-color);
+    }
+    .platform-card:hover::before { opacity: 1; }
+
+    .card-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--card-color);
+      margin-bottom: 1.2rem;
+    }
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      color: var(--text-bright);
+      margin-bottom: 0.8rem;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.2rem 0.6rem;
+      border: 1px solid var(--card-color);
+      color: var(--card-color);
+      opacity: 0.6;
+      letter-spacing: 1px;
+    }
+    .card-cta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--card-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-cta::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+    .platform-card:hover .card-cta::after { transform: translateX(4px); }
+
+    .card-hub { --card-color: var(--accent2); }
+    .card-analyz { --card-color: var(--accent); }
+
+    /* ── FEATURES ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .feature {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .feature-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+    .feature-desc {
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── PRIVACY & CONTACT SECTIONS ── */
+    .doc-section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      margin-bottom: 1.5rem;
+    }
+    .doc-section h3 {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-section p, .doc-section li {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    .doc-section ul {
+      padding-left: 1.2rem;
+    }
+    .doc-section li { margin-bottom: 0.3rem; }
+
+    /* ── CONTACT FORM ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 600px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+    .form-group select option { background: var(--bg2); }
+    .form-group textarea { min-height: 120px; }
+
+    .btn-submit {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover { opacity: 0.85; transform: translateY(-2px); }
+
+    .contact-info {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .contact-item-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+    }
+    .contact-item-value {
+      font-size: 0.85rem;
+      color: var(--text-bright);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+    .footer-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    /* ── ANCHOR OFFSET (fixed nav) ── */
+    [id] { scroll-margin-top: 70px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">KINETIC ORACLE</a>
+  <div class="nav-links">
+    <a href="#platforms">PLATFORMS</a>
+    <a href="#privacy">개인정보처리방침</a>
+    <a href="#contact">문의하기</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">▸ SYSTEM ONLINE · INTELLIGENCE HUB</div>
+  <h1 class="hero-title">KINETIC<br><span>ORACLE</span></h1>
+  <p class="hero-sub">// AI-POWERED KNOWLEDGE & ANALYSIS NETWORK</p>
+  <p class="hero-desc">
+    인과관계 기반 지식 그래프와 AI 실시간 분석을 결합한<br>
+    차세대 인텔리전스 허브입니다.<br>
+    두 플랫폼을 통해 시장을 더 깊이 이해하세요.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">116+</div>
+      <div class="stat-label">분석 영상</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">DAILY</div>
+      <div class="stat-label">업데이트</div>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ EXPLORE</div>
+</div>
+
+<hr class="divider">
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <p class="section-label">// 002 · PLATFORMS</p>
+  <h2 class="section-title">두 플랫폼을<br>선택하세요</h2>
+  <div class="platforms">
+
+    <!-- Card 1 -->
+    <a href="https://kinetic-oracle-hub.vercel.app/" target="_blank" class="platform-card card-hub">
+      <div class="card-tag">▸ PLATFORM 01 · KNOWLEDGE GRAPH</div>
+      <div class="card-icon">🧠</div>
+      <div class="card-title">KINETIC<br>ORACLE HUB</div>
+      <div class="card-desc">
+        인과관계 기반 엔터프라이즈 지식 그래프 허브.<br>
+        복잡한 매크로 흐름을 구조적으로 파악하고<br>
+        도메인별 인사이트 타임라인을 제공합니다.
+      </div>
+      <div class="card-tags">
+        <span class="tag">지식그래프</span>
+        <span class="tag">매크로</span>
+        <span class="tag">인과관계</span>
+        <span class="tag">엔터프라이즈</span>
+      </div>
+      <div class="card-cta">ENTER PLATFORM</div>
+    </a>
+
+    <!-- Card 2 -->
+    <a href="https://analyz1.vercel.app/" target="_blank" class="platform-card card-analyz">
+      <div class="card-tag">▸ PLATFORM 02 · YOUTUBE ANALYSIS</div>
+      <div class="card-icon">📊</div>
+      <div class="card-title">ANALYZ<br>YOUTUBE INSIGHT</div>
+      <div class="card-desc">
+        AI가 유튜브 채널을 실시간 분석해<br>
+        투자 인사이트를 자동으로 추출합니다.<br>
+        테크, 주식, 우주, 로봇 등 다양한 분야 커버.
+      </div>
+      <div class="card-tags">
+        <span class="tag">AI분석</span>
+        <span class="tag">투자인사이트</span>
+        <span class="tag">실시간</span>
+      </div>
+      <div class="card-cta">ENTER PLATFORM</div>
+    </a>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FEATURES -->
+<section>
+  <p class="section-label">// 003 · WHY USE THIS</p>
+  <h2 class="section-title">주요 특징</h2>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">DAILY UPDATE</div>
+      <div class="feature-desc">매일 새로운 분석이 자동으로 업데이트됩니다.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">AI POWERED</div>
+      <div class="feature-desc">AI가 핵심 인사이트와 액션 포인트를 자동 추출합니다.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">ACTION POINT</div>
+      <div class="feature-desc">분석에서 끝나지 않고 실제 투자 행동 기준을 제시합니다.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">MULTI DOMAIN</div>
+      <div class="feature-desc">반도체, AI, 우주, 로봇, 경제 등 다양한 분야를 커버합니다.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRIVACY -->
+<section id="privacy">
+  <p class="section-label">// 004 · LEGAL</p>
+  <h2 class="section-title">개인정보<br>처리방침</h2>
+
+  <div class="doc-section">
+    <h3>▸ 01 · 총칙</h3>
+    <p>Kinetic Oracle(이하 "당 사이트")은 이용자의 개인정보를 중요하게 생각하며, 「개인정보 보호법」 등 관련 법령을 준수합니다. 본 방침은 당 사이트가 운영하는 모든 플랫폼(kinetic-oracle-hub, analyz1)에 적용됩니다.</p>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 02 · 수집하는 개인정보 항목</h3>
+    <p>당 사이트는 서비스 제공을 위해 아래와 같은 정보를 수집할 수 있습니다.</p>
+    <ul>
+      <li>문의하기 양식 제출 시: 이름, 이메일 주소, 문의 내용</li>
+      <li>사이트 방문 시 자동 수집: IP 주소, 브라우저 종류, 방문 일시, 서비스 이용 기록 (Google Analytics를 통해 수집될 수 있음)</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 03 · 개인정보의 수집 및 이용 목적</h3>
+    <ul>
+      <li>이용자 문의 접수 및 답변 처리</li>
+      <li>서비스 품질 개선 및 통계 분석</li>
+      <li>부정 이용 방지 및 보안 강화</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 04 · 개인정보의 보유 및 이용 기간</h3>
+    <p>수집된 개인정보는 목적 달성 후 즉시 파기합니다. 단, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다.</p>
+    <ul>
+      <li>문의 내용: 처리 완료 후 1년 보관 후 파기</li>
+      <li>접속 로그: 3개월 보관 후 파기</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 05 · 개인정보의 제3자 제공</h3>
+    <p>당 사이트는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.</p>
+    <ul>
+      <li>이용자가 사전에 동의한 경우</li>
+      <li>법령의 규정에 의하거나 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 06 · 쿠키(Cookie) 사용</h3>
+    <p>당 사이트는 구글 애널리틱스 등 제3자 서비스를 통해 쿠키를 사용할 수 있습니다. 이용자는 브라우저 설정을 통해 쿠키 저장을 거부할 수 있으며, 이 경우 일부 서비스 이용에 불편이 있을 수 있습니다.</p>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 07 · 개인정보 보호책임자</h3>
+    <p>개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+    <ul>
+      <li>서비스명: Kinetic Oracle Intelligence Hub</li>
+      <li>문의: 하단 문의하기 양식을 통해 접수 가능</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ 08 · 방침 변경</h3>
+    <p>본 개인정보처리방침은 법령 또는 서비스 변경에 따라 내용이 수정될 수 있으며, 변경 시 사이트 공지를 통해 안내합니다.</p>
+    <p>시행일: 2026년 6월 1일</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// 005 · CONTACT</p>
+  <h2 class="section-title">문의하기</h2>
+
+  <div class="contact-info">
+    <div class="contact-item">
+      <span class="contact-item-label">▸ 운영 시간</span>
+      <span class="contact-item-value">평일 09:00 – 18:00 KST</span>
+    </div>
+    <div class="contact-item">
+      <span class="contact-item-label">▸ 답변 기간</span>
+      <span class="contact-item-value">영업일 기준 1~3일 이내</span>
+    </div>
+    <div class="contact-item">
+      <span class="contact-item-label">▸ 플랫폼</span>
+      <span class="contact-item-value">Kinetic Oracle / Analyz</span>
+    </div>
+  </div>
+
+  <div class="doc-section">
+    <h3>▸ SEND MESSAGE</h3>
+    <form action="https://formsubmit.co/ddongchane@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="[Kinetic Oracle] 새 문의가 도착했습니다">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none">
+      <div class="contact-grid">
+        <div class="form-group">
+          <label>NAME *</label>
+          <input type="text" id="name" placeholder="이름을 입력하세요" required>
+        </div>
+        <div class="form-group">
+          <label>EMAIL *</label>
+          <input type="email" id="email" placeholder="이메일을 입력하세요" required>
+        </div>
+        <div class="form-group">
+          <label>PLATFORM</label>
+          <select id="platform">
+            <option value="">플랫폼 선택 (선택사항)</option>
+            <option value="hub">Kinetic Oracle Hub</option>
+            <option value="analyz">Analyz YouTube Insight</option>
+            <option value="both">두 플랫폼 모두</option>
+            <option value="other">기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>SUBJECT *</label>
+          <input type="text" id="subject" placeholder="문의 제목" required>
+        </div>
+        <div class="form-group full">
+          <label>MESSAGE *</label>
+          <textarea id="message" placeholder="문의 내용을 상세히 입력해주세요." required></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">SEND MESSAGE →</button>
+      <p id="form-msg" style="margin-top:1rem; font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--accent3); display:none;">
+        ▸ 메시지가 전송되었습니다. 빠른 시일 내에 답변 드리겠습니다.
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="#platforms">PLATFORMS</a>
+    <a href="#privacy">개인정보처리방침</a>
+    <a href="#contact">문의하기</a>
+    <a href="https://kinetic-oracle-hub.vercel.app/" target="_blank">ORACLE HUB</a>
+    <a href="https://analyz1.vercel.app/" target="_blank">ANALYZ</a>
+  </div>
+  <p class="footer-copy">© 2026 KINETIC ORACLE INTELLIGENCE HUB · ALL RIGHTS RESERVED</p>
+</footer>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    // 실제 배포 시 FormSubmit, EmailJS 등 연동 필요
+    document.getElementById('form-msg').style.display = 'block';
+    e.target.reset();
+  }
+</script>
+
+</body>
+</html>
