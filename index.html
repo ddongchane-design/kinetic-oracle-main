@@ -360,63 +360,79 @@
     }
     .doc-section li { margin-bottom: 0.3rem; }
 
-    /* ── CONTACT FORM ── */
-    .contact-grid {
+    /* ── CONTACT CARDS ── */
+    .contact-cards {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
-    @media (max-width: 600px) {
-      .contact-grid { grid-template-columns: 1fr; }
-    }
-    .form-group {
+    .contact-card-info {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      transition: transform 0.3s, border-color 0.3s;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      justify-content: space-between;
+      min-height: 250px;
     }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-group label {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 2px;
-      color: var(--text-dim);
+    .contact-card-info::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Noto Sans KR', sans-serif;
-      font-size: 0.85rem;
-      padding: 0.7rem 1rem;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-      resize: vertical;
+    .contact-card-info:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-color);
     }
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-      border-color: var(--accent);
-    }
-    .form-group select option { background: var(--bg2); }
-    .form-group textarea { min-height: 120px; }
+    .contact-card-info:hover::before { opacity: 1; }
 
-    .btn-submit {
+    .card-email { --card-color: var(--accent); }
+    .card-phone { --card-color: var(--accent3); }
+
+    .contact-value {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 3px;
-      color: var(--bg);
-      background: var(--accent);
-      border: none;
-      padding: 0.9rem 2.5rem;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.2s;
-      margin-top: 0.5rem;
+      font-size: 1.25rem;
+      color: var(--text-bright);
+      margin: 1rem 0 1.5rem 0;
+      word-break: break-all;
+      letter-spacing: 1px;
     }
-    .btn-submit:hover { opacity: 0.85; transform: translateY(-2px); }
+    .contact-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .btn-contact-action {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--bg);
+      background: var(--card-color);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-contact-action:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+    .btn-contact-action.secondary {
+      background: transparent;
+      border: 1px solid var(--card-color);
+      color: var(--card-color);
+    }
 
     .contact-info {
       display: flex;
@@ -678,45 +694,40 @@
     </div>
   </div>
 
-  <div class="doc-section">
-    <h3>▸ SEND MESSAGE</h3>
-    <form action="https://formsubmit.co/ddongchane@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="[Kinetic Oracle] 새 문의가 도착했습니다">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="text" name="_honey" style="display:none">
-      <div class="contact-grid">
-        <div class="form-group">
-          <label>NAME *</label>
-          <input type="text" id="name" name="name" placeholder="이름을 입력하세요" required>
-        </div>
-        <div class="form-group">
-          <label>EMAIL *</label>
-          <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required>
-        </div>
-        <div class="form-group">
-          <label>PLATFORM</label>
-          <select id="platform" name="platform">
-            <option value="">플랫폼 선택 (선택사항)</option>
-            <option value="hub">Kinetic Oracle Hub</option>
-            <option value="analyz">Analyz YouTube Insight</option>
-            <option value="both">두 플랫폼 모두</option>
-            <option value="other">기타</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>SUBJECT *</label>
-          <input type="text" id="subject" name="subject" placeholder="문의 제목" required>
-        </div>
-        <div class="form-group full">
-          <label>MESSAGE *</label>
-          <textarea id="message" name="message" placeholder="문의 내용을 상세히 입력해주세요." required></textarea>
+  <div class="contact-cards">
+    <!-- Email Card -->
+    <div class="contact-card-info card-email">
+      <div>
+        <div class="card-tag">▸ CONTACT METHOD 01 · EMAIL</div>
+        <div class="card-icon">✉</div>
+        <div class="card-title">이메일 문의</div>
+        <div class="card-desc">궁금한 점이나 협업 문의가 있으시면 이메일로 연락주세요.</div>
+      </div>
+      <div>
+        <div class="contact-value">ddongchane@gmail.com</div>
+        <div class="contact-actions">
+          <a href="mailto:ddongchane@gmail.com" class="btn-contact-action">메일 보내기</a>
+          <button onclick="copyToClipboard('ddongchane@gmail.com', this)" class="btn-contact-action secondary">주소 복사</button>
         </div>
       </div>
-      <button type="submit" class="btn-submit">SEND MESSAGE →</button>
-      <p id="form-msg" style="margin-top:1rem; font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--accent3); display:none;">
-        ▸ 메시지가 전송되었습니다. 빠른 시일 내에 답변 드리겠습니다.
-      </p>
-    </form>
+    </div>
+
+    <!-- Phone Card -->
+    <div class="contact-card-info card-phone">
+      <div>
+        <div class="card-tag">▸ CONTACT METHOD 02 · PHONE</div>
+        <div class="card-icon">📞</div>
+        <div class="card-title">전화 문의</div>
+        <div class="card-desc">유선 상담이나 긴급 문의는 아래 번호로 연락 바랍니다.</div>
+      </div>
+      <div>
+        <div class="contact-value">010-4617-7298</div>
+        <div class="contact-actions">
+          <a href="tel:010-4617-7298" class="btn-contact-action">전화 걸기</a>
+          <button onclick="copyToClipboard('010-4617-7298', this)" class="btn-contact-action secondary">번호 복사</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -733,11 +744,18 @@
 </footer>
 
 <script>
-  function handleSubmit(e) {
-    e.preventDefault();
-    // 실제 배포 시 FormSubmit, EmailJS 등 연동 필요
-    document.getElementById('form-msg').style.display = 'block';
-    e.target.reset();
+  function copyToClipboard(text, buttonElement) {
+    navigator.clipboard.writeText(text).then(function() {
+      const originalText = buttonElement.innerText;
+      buttonElement.innerText = "복사 완료!";
+      buttonElement.style.opacity = "0.7";
+      setTimeout(function() {
+        buttonElement.innerText = originalText;
+        buttonElement.style.opacity = "";
+      }, 1500);
+    }).catch(function(err) {
+      console.error('클립보드 복사 실패: ', err);
+    });
   }
 </script>
 
