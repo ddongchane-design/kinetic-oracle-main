@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Oracle | 주간 금리 동향</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050810;
+      --bg2: #080d1a;
+      --panel: #0b1120;
+      --border: #1a2a4a;
+      --accent: #00d4ff;
+      --accent2: #7b5cfa;
+      --accent3: #00ff9d;
+      --text: #dde8f8;
+      --text-dim: #8aa8cc;
+      --text-bright: #ffffff;
+      --glow: rgba(0, 255, 157, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-top: 80px;
+    }
+
+    /* 배경 그리드 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 컨테이너 */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 상단 영역 */
+    header {
+      margin-bottom: 4rem;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 2px;
+      margin-bottom: 2.5rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .back-btn:hover {
+      color: var(--text-bright);
+      transform: translateX(-4px);
+    }
+    .header-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--accent3);
+      margin-bottom: 0.8rem;
+    }
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: 4px;
+      color: var(--text-bright);
+      margin-bottom: 1rem;
+    }
+    .header-desc {
+      max-width: 600px;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* 리포트 카드 그리드 */
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* 리포트 카드 개별 스타일 */
+    .report-card {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 260px;
+    }
+    .report-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent3), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .report-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent3);
+    }
+    .report-card:hover::before {
+      opacity: 1;
+    }
+
+    .report-card-date {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--accent3);
+      margin-bottom: 1.2rem;
+    }
+    .report-card-title {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--text-bright);
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+    }
+    .report-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .report-card-cta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--accent3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+    .report-card-cta::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+    .report-card:hover .report-card-cta::after {
+      transform: translateX(4px);
+    }
+
+    /* 로딩 및 에러 상태 */
+    .status-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem;
+      border: 1px dashed var(--border);
+      background: rgba(11, 17, 32, 0.5);
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    /* 푸터 */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      margin-top: 8rem;
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 뒤로 가기 -->
+  <a href="index.html" class="back-btn">← BACK TO HUB</a>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="header-label">// 001 · ARCHIVES</div>
+    <h1 class="header-title">WEEKLY RATE TRENDS</h1>
+    <p class="header-desc">
+      국내외 채권 시장의 금리 변화와 매크로 경제 주요 변수들을 분석하여<br>
+      매주 제공하는 지식 오라클의 금리 동향 주간 리포트 아카이브입니다.
+    </p>
+  </header>
+
+  <!-- 리포트 리스트 그리드 -->
+  <main class="reports-grid" id="reports-container">
+    <div class="status-msg">▸ INITIALIZING DATABASE LINK...</div>
+  </main>
+
+  <!-- 푸터 -->
+  <footer>
+    © 2026 KINETIC ORACLE INTELLIGENCE HUB · ALL RIGHTS RESERVED
+  </footer>
+</div>
+
+<script>
+  // 로컬 파일 시스템에서 열었을 경우(CORS 제한) 작동할 예비 데이터
+  const fallbackData = [
+    {
+      "date": "2026.06.05",
+      "title": "2026년 6월 1주차 주간 금리 동향",
+      "desc": "국고채 및 미국채 금리 하락 안정 흐름 속 국내 채권 시장 영향 분석 보고서.",
+      "filename": "2026-06-05-report.html"
+    }
+  ];
+
+  function renderReports(reports) {
+    const container = document.getElementById('reports-container');
+    if (!reports || reports.length === 0) {
+      container.innerHTML = `<div class="status-msg">▸ 등록된 리포트가 없습니다.</div>`;
+      return;
+    }
+
+    let html = '';
+    reports.forEach(report => {
+      // reports 폴더 내의 파일로 경로 설정
+      const reportUrl = `reports/${report.filename}`;
+      html += `
+        <a href="${reportUrl}" class="report-card">
+          <div>
+            <div class="report-card-date">▸ ${report.date}</div>
+            <h3 class="report-card-title">${report.title}</h3>
+            <p class="report-card-desc">${report.desc || ''}</p>
+          </div>
+          <div class="report-card-cta">READ REPORT</div>
+        </a>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  // reports.json 페치 시도
+  fetch('reports.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      renderReports(data);
+    })
+    .catch(error => {
+      console.warn('CORS 혹은 파일 경로 문제로 JSON 로드 실패. 예비 데이터를 사용합니다:', error);
+      // 로컬 file:// 프로토콜 테스트 대응용 예비 데이터 렌더링
+      renderReports(fallbackData);
+    });
+</script>
+
+</body>
+</html>
