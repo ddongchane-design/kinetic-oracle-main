@@ -241,17 +241,21 @@
     }
     .platform-card:hover::before { opacity: 1; }
 
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
     .card-tag {
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.65rem;
       letter-spacing: 3px;
       color: var(--card-color);
-      margin-bottom: 1.2rem;
     }
     .card-date {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.65rem;
       letter-spacing: 1px;
@@ -562,8 +566,10 @@
 
     <!-- Card 1 -->
     <a href="https://kinetic-oracle-hub.vercel.app/" class="platform-card card-hub">
-      <div class="card-tag">▸ PLATFORM 01 · KNOWLEDGE GRAPH</div>
-      <div class="card-date">UPDATED: 2026.06.08</div>
+      <div class="card-header">
+        <div class="card-tag">▸ PLATFORM 01 · KNOWLEDGE GRAPH</div>
+        <div class="card-date">UPDATED: 2026.06.08</div>
+      </div>
       <div class="card-icon">🧠</div>
       <div class="card-title">KINETIC<br>ORACLE HUB</div>
       <div class="card-desc">
@@ -582,8 +588,10 @@
 
     <!-- Card 2 -->
     <a href="https://analyz1.vercel.app/" class="platform-card card-analyz">
-      <div class="card-tag">▸ PLATFORM 02 · YOUTUBE ANALYSIS</div>
-      <div class="card-date">UPDATED: 2026.06.08</div>
+      <div class="card-header">
+        <div class="card-tag">▸ PLATFORM 02 · YOUTUBE ANALYSIS</div>
+        <div class="card-date">UPDATED: 2026.06.08</div>
+      </div>
       <div class="card-icon">📊</div>
       <div class="card-title">ANALYZ<br>YOUTUBE INSIGHT</div>
       <div class="card-desc">
@@ -601,8 +609,10 @@
 
     <!-- Card 3 -->
     <a href="trends.html" class="platform-card card-trends">
-      <div class="card-tag">▸ PLATFORM 03 · WEEKLY REPORTS</div>
-      <div class="card-date">UPDATED: 2026.06.08</div>
+      <div class="card-header">
+        <div class="card-tag">▸ PLATFORM 03 · WEEKLY REPORTS</div>
+        <div class="card-date">UPDATED: 2026.06.08</div>
+      </div>
       <div class="card-icon">📈</div>
       <div class="card-title">WEEKLY<br>RATE TRENDS</div>
       <div class="card-desc">
